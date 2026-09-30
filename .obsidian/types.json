@@ -1,0 +1,10 @@
+{
+  "types": {
+    "aliases": "aliases",
+    "cssclasses": "multitext",
+    "tags": "tags",
+    "target_price": "number",
+    "stop_loss": "number",
+    "entry_price": "number"
+  }
+}

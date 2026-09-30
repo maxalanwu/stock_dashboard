@@ -1,0 +1,8 @@
+# Obsidian workspace state (changes on every pane switch)
+.obsidian/workspace*.json
+
+# launchd run logs
+logs/
+
+# macOS
+.DS_Store
