@@ -10,7 +10,11 @@ description: 用 twstockmcpserver 抓取個股資料並更新 Obsidian vault 中
 ## 步驟
 
 1. **找檔案**：在 `10_Stocks/` 找 `<代號> *.md`。若不存在，依 `90_Templates/個股模板.md` 的 frontmatter 與區塊結構新建 `<代號> <名稱>.md`（Templater 語法要替換成實際值，`status: 觀察`）。
-2. **判斷市場**：`get_company_profile` 有資料 → 上市；否則視為上櫃，改用 OTC 系列工具（`get_otc_valuation`、`get_otc_institutional`、`get_otc_margin_balance`、`get_otc_foreign_holdings`）。
+2. **判斷市場**：先呼叫 `get_realtime_quote([code])`（可一次帶入所有代號），依回傳名稱後的標記決定：
+   - `[上市]` → 上市，用下方上市工具。
+   - `[上櫃]` → 上櫃，改用 OTC 系列工具（`get_otc_valuation`、`get_otc_institutional`、`get_otc_margin_balance`、`get_otc_foreign_holdings`）。
+   - 兩者皆無或查無報價 → 回報「查無此代號」，跳過該檔，**不要**建檔、也不要預設為上櫃。
+   代號本身無法分辨上市／上櫃（編號範圍重疊），不要用代號推斷；也不要用 `get_company_profile` 查不到來判定為上櫃（ETF、興櫃、打錯代號都會查不到）。
 3. **平行呼叫 MCP**（上市為例）：
    - `get_company_profile(code)` → 產業、董事長、資本額、主要業務
    - `get_realtime_quote([code])` → 收盤價、漲跌幅
@@ -26,6 +30,16 @@ description: 用 twstockmcpserver 抓取個股資料並更新 Obsidian vault 中
    - `get_twse_institutional_investors_by_stock(code, date)` → 最近 5 個交易日三大法人（逐日呼叫，非交易日跳過）
    - `get_company_major_news(code, limit=5)` → 近期重大訊息
    某工具失敗時在該區塊寫「⚠️ 資料取得失敗：<原因>」，不要中斷整體流程。
+
+   **上櫃基本資料**：`get_company_profile` 只收上市公司，`get_public_company_profile` 也查不到上櫃公司，兩者都不要呼叫。改用 `get_industry_peers(code, limit=3)` 取產業別（回傳「產業 24 半導體業」→ 去掉數字，`industry: 半導體業`，需與 `30_Industry/` 的名稱一致）。基本資料區塊只寫產業別，董事長、資本額、主要業務註明「上櫃公司無資料來源」。
+
+   **ETF 分支**：代號以 `00` 開頭即視為 ETF（例如 0050、0052、00878），`industry: ETF`，市場依第 2 步判斷（上櫃 ETF 的籌碼改用 OTC 系列工具）。
+   - **跳過**（ETF 不適用，MOPS 會回 500）：`get_company_profile`、`get_stock_valuation_ratios`、`get_company_monthly_revenue`、`get_company_income_statement`、`get_company_dividend`、`get_company_major_news`。
+   - 照常呼叫：報價、技術指標、外資持股、融資融券、三大法人。
+   - 配息：`get_exright_results_history(start_date=兩年前, end_date=今天, stock_no=code)` → 除息日與息值。`dividend_yield` = 近 12 個月息值加總 ÷ 收盤價 × 100，並在估值表註明是推算值。
+   - 持股：`WebFetch https://www.moneydj.com/etf/x/basic/basic0007.xdjhtm?etfid=<代號>.tw` 取前十大持股（代號、名稱、比例、股數、資料日期）。
+   - AUTO 區塊只保留：基本資料（ETF 全名：`get_fund_basic_info` 可查）、估值（只放收盤、殖利率）、**前十大持股**（表格 + 合計比例，註明來源 MoneyDJ）、股利（除息日｜現金股利）、籌碼、技術面。不要寫月營收、獲利、重大訊息區塊。
+   - frontmatter 的 `pe, pb, eps_ttm, revenue_yoy, revenue_ytd_yoy` 留空。
 4. **改寫 AUTO 區塊**：只替換 `<!-- AUTO:START -->` 與 `<!-- AUTO:END -->` 之間的內容，**絕不修改區塊外的手寫內容**（我的論點、追蹤日誌）。區塊格式：
 
    ```
