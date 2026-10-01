@@ -9,7 +9,7 @@ description: 用 twstockmcpserver 抓取個股資料並更新 Obsidian vault 中
 
 ## 步驟
 
-1. **找檔案**：在 `10_Stocks/` 找 `<代號> *.md`。若不存在，依 `90_Templates/個股模板.md` 的 frontmatter 與區塊結構新建 `<代號> <名稱>.md`（Templater 語法要替換成實際值，`status: 觀察`）。
+1. **找檔案**：在 `10_Stocks/` 找 `<代號> *.md`。若不存在，依範本的 frontmatter 與區塊結構新建 `<代號> <名稱>.md`（Templater 語法要替換成實際值，`status: 觀察`）。ETF（見第 3 步 ETF 分支的判斷）用 `90_Templates/ETF模板.md`，其餘用 `90_Templates/個股模板.md`。
 2. **判斷市場**：先呼叫 `get_realtime_quote([code])`（可一次帶入所有代號），依回傳名稱後的標記決定：
    - `[上市]` → 上市，用下方上市工具。
    - `[上櫃]` → 上櫃，改用 OTC 系列工具（`get_otc_valuation`、`get_otc_institutional`、`get_otc_margin_balance`、`get_otc_foreign_holdings`）。
@@ -39,7 +39,8 @@ description: 用 twstockmcpserver 抓取個股資料並更新 Obsidian vault 中
    - 配息：`get_exright_results_history(start_date=兩年前, end_date=今天, stock_no=code)` → 除息日與息值。`dividend_yield` = 近 12 個月息值加總 ÷ 收盤價 × 100，並在估值表註明是推算值。
    - 持股：`WebFetch https://www.moneydj.com/etf/x/basic/basic0007.xdjhtm?etfid=<代號>.tw` 取前十大持股（代號、名稱、比例、股數、資料日期）。
    - AUTO 區塊只保留：基本資料（ETF 全名：`get_fund_basic_info` 可查）、估值（只放收盤、殖利率）、**前十大持股**（表格 + 合計比例，註明來源 MoneyDJ）、股利（除息日｜現金股利）、籌碼、技術面。不要寫月營收、獲利、重大訊息區塊。
-   - frontmatter 的 `pe, pb, eps_ttm, revenue_yoy, revenue_ytd_yoy` 留空。
+   - frontmatter 依 `ETF模板.md`，更新欄位見第 5 步的 ETF 欄位清單。
+   - 既有 ETF 筆記若仍是個股模板的 frontmatter：補上 ETF 模板多出的欄位，刪掉空白的 `pe, pb, eps_ttm, revenue_yoy, revenue_ytd_yoy`；`tags` 不要改。
 4. **改寫 AUTO 區塊**：只替換 `<!-- AUTO:START -->` 與 `<!-- AUTO:END -->` 之間的內容，**絕不修改區塊外的手寫內容**（我的論點、追蹤日誌）。區塊格式：
 
    ```
@@ -85,6 +86,8 @@ description: 用 twstockmcpserver 抓取個股資料並更新 Obsidian vault 中
    ## 重大訊息     （最近 5 則：日期 + 主旨）
    ```
 
-5. **更新 frontmatter**：`name, market, industry, price, change_pct, pe, pb, dividend_yield, eps_ttm, revenue_yoy`（最新月）, `revenue_ytd_yoy, foreign_ratio, foreign_net_5d, trust_net_5d`（單位：張）, `k, d, rsi, updated`（YYYY-MM-DD）。數值一律寫純數字（不含 %、逗號），Dataview 才能排序比較。**不要動** `status, entry_price, target_price, stop_loss, tags` 的既有值。
+5. **更新 frontmatter**：`name, market, industry, price, change_pct, pe, pb, dividend_yield, eps_ttm, revenue_yoy`（最新月）, `revenue_ytd_yoy, foreign_ratio, foreign_net_5d, trust_net_5d`（單位：張）, `k, d, rsi, updated`（YYYY-MM-DD）。
+   **ETF 欄位**：`name, market, industry, etf_type`（`指數型`／`主動式`：代號結尾為 A 或全名含「主動式」即為主動式）, `price, change_pct, dividend_yield`（推算值）, `dividend_freq`（`月配`／`季配`／`半年配`／`年配`／`不配息`，依近兩年除息次數判斷）, `top10_pct`（前十大合計比例）, `top1_pct`（第一大持股比例）, `foreign_ratio, foreign_net_5d, trust_net_5d, margin_balance`（融資餘額，張）, `k, d, rsi, updated`。
+   數值一律寫純數字（不含 %、逗號），Dataview 才能排序比較。**不要動** `status, entry_price, target_price, stop_loss, tags` 的既有值。
 6. **原始資料**（選用）：若使用者要求保留原始資料，存到 `_raw/<代號>/<YYYY-MM-DD>.json`。
 7. 完成後回報：更新了哪些股票、每檔 1 行重點、有哪些工具失敗。
