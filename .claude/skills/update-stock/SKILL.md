@@ -66,7 +66,7 @@ description: 用 twstockmcpserver 抓取個股資料並更新 Obsidian vault 中
    **圖表格式**：使用 Obsidian Charts 外掛的 ```` ```chart ```` 區塊（YAML）。規則如下：
    - 圖表的 labels 一律由舊到新（左舊右新），和表格方向相反。
    - 數值寫純數字。
-   - 每張圖都加 `width: 100%`、`legendPosition: top`；長條圖加 `beginAtZero: true`，折線圖加 `tension: 0.2`。
+   - 每張圖都加 `width: 100%`、`legendPosition: top`、`textColor: "#ffffff"`（文字白色）；長條圖加 `beginAtZero: true`，折線圖加 `tension: 0.2`。
    - 月份標籤用 `YY-MM`，季度標籤用 `115Q2`，日期標籤用 `MM-DD`。
 
    範例（三大法人）：
@@ -82,6 +82,8 @@ description: 用 twstockmcpserver 抓取個股資料並更新 Obsidian vault 中
        data: [467, 324, 243, 117, 400]
    width: 100%
    legendPosition: top
+   beginAtZero: true
+   textColor: "#ffffff"
    ```
 
    其餘區塊格式：
