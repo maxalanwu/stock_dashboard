@@ -17,7 +17,7 @@ cd "$VAULT" || exit 1
 2. /update-stock 持有
 3. /update-stock 觀察
 遵守 CLAUDE.md 規則。最後輸出一段簡短摘要。" \
-    --allowedTools "mcp__twstockmcpserver" "Read" "Write" "Edit" "Glob" "Grep" "Skill" "Bash(ls:*)" "Bash(mkdir:*)" "Bash(date:*)"
+    --allowedTools "mcp__twstockmcpserver" "Read" "Write" "Edit" "Glob" "Grep" "Skill" "Bash(ls:*)" "Bash(mkdir:*)" "Bash(date:*)" "Bash(curl:*)"
 
   echo "=== $(date '+%F %T') 結束（exit $?）==="
 } >> "$LOG" 2>&1
