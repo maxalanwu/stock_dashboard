@@ -18,6 +18,7 @@ margin_balance:
 k:
 d:
 rsi:
+shares:
 entry_price:
 target_price:
 stop_loss:

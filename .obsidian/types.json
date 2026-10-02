@@ -5,6 +5,7 @@
     "tags": "tags",
     "target_price": "number",
     "stop_loss": "number",
-    "entry_price": "number"
+    "entry_price": "number",
+    "lots": "number"
   }
 }

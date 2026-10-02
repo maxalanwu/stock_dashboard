@@ -23,6 +23,10 @@ description: 用 twstockmcpserver 抓取個股資料並更新 Obsidian vault 中
    - `get_company_income_statement(code)` → 最新一季損益
    - 近 8 季趨勢：另外呼叫 `get_company_income_statement(code, year, season)` 取得更早的季度。每次回傳都含「當季」與「去年同季」，所以只要查最近 4 季，就能湊出 8 季。**Q4 只有全年數字**，單季 Q4 要用「全年 − 前三季累計（Q3 報表的累計欄）」自己算，所以 Q3 和 Q4 都要查。
    - EPS TTM = 近四季單季 EPS 加總（不要用 股價 ÷ PE 推算）
+   - PEG（用近 8 季的單季 EPS 計算）：
+     - `eps_ttm_yoy` = (EPS TTM ÷ 前四季單季 EPS 加總 − 1) × 100
+     - `peg` = (收盤價 ÷ EPS TTM) ÷ `eps_ttm_yoy`，取兩位小數。本益比用 收盤 ÷ EPS TTM，不用證交所公布的 PE，讓分子分母基準一致。
+     - `eps_ttm_yoy` ≤ 0、前四季 EPS 加總 ≤ 0，或 EPS TTM ≤ 0 時，PEG 沒有意義：`peg` 留空，估值表寫「不適用」並註明原因。
    - `get_company_dividend(code)` → 近兩年股利
    - `get_technical_indicators(code, days=10)` → 均線、KD、RSI、MACD
    - `get_foreign_holdings(stock_no=code)` → 外資持股比
@@ -48,7 +52,7 @@ description: 用 twstockmcpserver 抓取個股資料並更新 Obsidian vault 中
    > 資料更新：YYYY-MM-DD HH:mm
 
    ## 基本資料
-   ## 估值         （表格：收盤、PE、PB、殖利率、EPS TTM）
+   ## 估值         （表格：收盤、PE、PB、殖利率、EPS TTM、EPS TTM 成長率、PEG；表下註明 PEG 計算方式）
    ## 月營收       （表格：月份｜營收(億)｜MoM｜YoY｜累計YoY，由新到舊；營收單位換算成億元）
                    + 圖表：月營收長條圖、YoY／累計 YoY 折線圖
    ## 獲利         （最新一季：營收、毛利率、營益率、淨利率、EPS 與去年同季比較）
@@ -86,8 +90,8 @@ description: 用 twstockmcpserver 抓取個股資料並更新 Obsidian vault 中
    ## 重大訊息     （最近 5 則：日期 + 主旨）
    ```
 
-5. **更新 frontmatter**：`name, market, industry, price, change_pct, pe, pb, dividend_yield, eps_ttm, revenue_yoy`（最新月）, `revenue_ytd_yoy, foreign_ratio, foreign_net_5d, trust_net_5d`（單位：張）, `k, d, rsi, updated`（YYYY-MM-DD）。
+5. **更新 frontmatter**：`name, market, industry, price, change_pct, pe, pb, dividend_yield, eps_ttm, eps_ttm_yoy, peg, revenue_yoy`（最新月）, `revenue_ytd_yoy, foreign_ratio, foreign_net_5d, trust_net_5d`（單位：張）, `k, d, rsi, updated`（YYYY-MM-DD）。
    **ETF 欄位**：`name, market, industry, etf_type`（`指數型`／`主動式`：代號結尾為 A 或全名含「主動式」即為主動式）, `price, change_pct, dividend_yield`（推算值）, `dividend_freq`（`月配`／`季配`／`半年配`／`年配`／`不配息`，依近兩年除息次數判斷）, `top10_pct`（前十大合計比例）, `top1_pct`（第一大持股比例）, `foreign_ratio, foreign_net_5d, trust_net_5d, margin_balance`（融資餘額，張）, `k, d, rsi, updated`。
-   數值一律寫純數字（不含 %、逗號），Dataview 才能排序比較。**不要動** `status, entry_price, target_price, stop_loss, tags` 的既有值。
+   數值一律寫純數字（不含 %、逗號），Dataview 才能排序比較。**不要動** `status, shares, entry_price, target_price, stop_loss, tags` 的既有值（`shares` 為持有股數，由使用者手動填）。
 6. **原始資料**（選用）：若使用者要求保留原始資料，存到 `_raw/<代號>/<YYYY-MM-DD>.json`。
 7. 完成後回報：更新了哪些股票、每檔 1 行重點、有哪些工具失敗。

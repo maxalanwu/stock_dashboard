@@ -16,7 +16,7 @@
 - 自動產生的內容只能寫在 `<!-- AUTO:START -->` 與 `<!-- AUTO:END -->` 之間，區塊外是使用者手寫內容，不可修改。
 - frontmatter 數值寫純數字（不含 % 或千分位），日期用 YYYY-MM-DD。
 - 圖表使用 Obsidian Charts 外掛的 ```chart 區塊，labels 由舊到新。
-- `status`、`entry_price`、`target_price`、`stop_loss` 由使用者維護，自動更新時不要覆蓋。
+- `status`、`shares`（持有股數，1 張 = 1000 股）、`entry_price`、`target_price`、`stop_loss` 由使用者維護，自動更新時不要覆蓋。
 - 摘要客觀陳述數據，不提供買賣建議。
 
 ## 指令
