@@ -39,4 +39,4 @@ tags: [stock, etf]
 - 認錯條件：
 
 ## 📝 追蹤日誌
-- <% tp.date.now("YYYY-MM-DD") %>：建立
+- <% tp.date.now("YYYY/MM/DD") %>：建立

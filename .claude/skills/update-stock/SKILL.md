@@ -49,7 +49,7 @@ description: 用 twstockmcpserver 抓取個股資料並更新 Obsidian vault 中
 
    ```
    > 🤖 AI 摘要（3~5 行：營收趨勢、獲利、籌碼、技術面重點，客觀陳述，不給買賣建議）
-   > 資料更新：YYYY-MM-DD HH:mm
+   > 資料更新：YYYY/MM/DD HH:mm
 
    ## 基本資料
    ## 估值         （表格：收盤、PE、PB、殖利率、EPS TTM、EPS TTM 成長率、PEG；表下註明 PEG 計算方式）
@@ -67,12 +67,12 @@ description: 用 twstockmcpserver 抓取個股資料並更新 Obsidian vault 中
    - 圖表的 labels 一律由舊到新（左舊右新），和表格方向相反。
    - 數值寫純數字。
    - 每張圖都加 `width: 100%`、`legendPosition: top`、`textColor: "#ffffff"`（文字白色）；長條圖加 `beginAtZero: true`，折線圖加 `tension: 0.2`。
-   - 月份標籤用 `YY-MM`，季度標籤用 `115Q2`，日期標籤用 `MM-DD`。
+   - 月份標籤用 `YYYY/MM`，季度標籤用 `115Q2`，日期標籤用 `YYYY/MM/DD`。表格與內文的日期也用 `YYYY/MM/DD`（月份 `YYYY/MM`），不要寫 `10-02`、`10/2` 這類短寫。
 
    範例（三大法人）：
    ```chart
    type: bar
-   labels: [09-22, 09-23, 09-24, 09-29, 09-30]
+   labels: [2026/09/22, 2026/09/23, 2026/09/24, 2026/09/29, 2026/09/30]
    series:
      - title: 外資(張)
        data: [-4330, 7123, -4668, -3736, 703]

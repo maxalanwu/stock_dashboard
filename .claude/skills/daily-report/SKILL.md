@@ -41,5 +41,6 @@ description: 用 twstockmcpserver 產生台股盤後日報，寫入 Obsidian vau
    ```
 
 4. 更新 frontmatter：`taiex, taiex_change_pct, otc, otc_change_pct, foreign_net_bn, trust_net_bn, dealer_net_bn, up_count, down_count`（純數字）。
-5. 不修改「持股快報」（Dataview）與「今日心得」區塊。
-6. 回報摘要與檔案路徑。若使用者持股有異常（跌幅 > 5%、被列注意股），在回報中提醒。
+5. 內文、表格中的日期一律寫 `YYYY/MM/DD`（標題 `# YYYY/MM/DD 盤後日報`），frontmatter `date` 維持 `YYYY-MM-DD`。
+6. 不修改「持股快報」（Dataview）與「今日心得」區塊。
+7. 回報摘要與檔案路徑。若使用者持股有異常（跌幅 > 5%、被列注意股），在回報中提醒。

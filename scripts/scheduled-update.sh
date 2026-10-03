@@ -13,9 +13,10 @@ cd "$VAULT" || exit 1
   docker info >/dev/null 2>&1 || { echo "Docker 未啟動，中止"; exit 1; }
 
   claude -p "今天是 $(date +%F)。依序執行：
-1. /daily-report（若今天非交易日，直接結束，不要產生任何檔案）
+1. /daily-report（若今天非交易日，跳過步驟 1~3，不要產生日報或更新個股）
 2. /update-stock 持有
 3. /update-stock 觀察
+4. /update-macro（無論是否交易日都執行；資料月份沒變就不改檔案）
 遵守 CLAUDE.md 規則。最後輸出一段簡短摘要。" \
     --allowedTools "mcp__twstockmcpserver" "Read" "Write" "Edit" "Glob" "Grep" "Skill" "Bash(ls:*)" "Bash(mkdir:*)" "Bash(date:*)" "Bash(curl:*)"
 
