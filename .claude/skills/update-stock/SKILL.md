@@ -44,7 +44,7 @@ description: 用 twstockmcpserver 抓取個股資料並更新 Obsidian vault 中
    - 持股：`WebFetch https://www.moneydj.com/etf/x/basic/basic0007.xdjhtm?etfid=<代號>.tw` 取前十大持股（代號、名稱、比例、股數、資料日期）。
    - AUTO 區塊只保留：基本資料（ETF 全名：`get_fund_basic_info` 可查）、估值（只放收盤、殖利率）、**前十大持股**（表格 + 合計比例，註明來源 MoneyDJ）、股利（除息日｜現金股利）、籌碼、技術面。不要寫月營收、獲利、重大訊息區塊。
    - frontmatter 依 `ETF模板.md`，更新欄位見第 5 步的 ETF 欄位清單。
-   - 既有 ETF 筆記若仍是個股模板的 frontmatter：補上 ETF 模板多出的欄位，刪掉空白的 `pe, pb, eps_ttm, revenue_yoy, revenue_ytd_yoy`；`tags` 不要改。
+   - 既有 ETF 筆記若仍是個股模板的 frontmatter：補上 ETF 模板多出的欄位，刪掉空白的 `pe, pb, eps_ttm, revenue_yoy, revenue_mom, revenue_ytd_yoy`；`tags` 不要改。
 4. **改寫 AUTO 區塊**：只替換 `<!-- AUTO:START -->` 與 `<!-- AUTO:END -->` 之間的內容，**絕不修改區塊外的手寫內容**（我的論點、追蹤日誌）。區塊格式：
 
    ```
@@ -92,7 +92,7 @@ description: 用 twstockmcpserver 抓取個股資料並更新 Obsidian vault 中
    ## 重大訊息     （最近 5 則：日期 + 主旨）
    ```
 
-5. **更新 frontmatter**：`name, market, industry, price, change_pct, pe, pb, dividend_yield, eps_ttm, eps_ttm_yoy, peg, revenue_yoy`（最新月）, `revenue_ytd_yoy, foreign_ratio, foreign_net_5d, trust_net_5d`（單位：張）, `k, d, rsi, updated`（YYYY-MM-DD）。
+5. **更新 frontmatter**：`name, market, industry, price, change_pct, pe, pb, dividend_yield, eps_ttm, eps_ttm_yoy, peg, revenue_yoy, revenue_mom`（最新月）, `revenue_ytd_yoy, foreign_ratio, foreign_net_5d, trust_net_5d`（單位：張）, `k, d, rsi, updated`（YYYY-MM-DD）。
    **ETF 欄位**：`name, market, industry, etf_type`（`指數型`／`主動式`：代號結尾為 A 或全名含「主動式」即為主動式）, `price, change_pct, dividend_yield`（推算值）, `dividend_freq`（`月配`／`季配`／`半年配`／`年配`／`不配息`，依近兩年除息次數判斷）, `top10_pct`（前十大合計比例）, `top1_pct`（第一大持股比例）, `foreign_ratio, foreign_net_5d, trust_net_5d, margin_balance`（融資餘額，張）, `k, d, rsi, updated`。
    數值一律寫純數字（不含 %、逗號），Dataview 才能排序比較。**不要動** `status, shares, entry_price, target_price, stop_loss, tags` 的既有值（`shares` 為持有股數，由使用者手動填）。
 6. **原始資料**（選用）：若使用者要求保留原始資料，存到 `_raw/<代號>/<YYYY-MM-DD>.json`。
